@@ -19,6 +19,6 @@ func RandomString(number int) string {
 	return sb.String()
 }
 
-func RandomEmail() string {
-	return fmt.Sprintf("%s@email.com", RandomString(6))
+func RandomEmail(number int) string {
+	return fmt.Sprintf("%s@email.com", RandomString(number))
 }
