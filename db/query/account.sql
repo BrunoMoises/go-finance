@@ -17,6 +17,7 @@ where id = $1 limit 1;
 
 -- name: GetAccounts :many
 select 
+    a.id,
     a.user_id, 
     a.category_id, 
     a.title,

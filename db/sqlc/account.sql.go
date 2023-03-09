@@ -127,6 +127,7 @@ func (q *Queries) GetAccountReports(ctx context.Context, arg GetAccountReportsPa
 
 const getAccounts = `-- name: GetAccounts :many
 select 
+	a.ID,
     a.user_id, 
     a.category_id, 
     a.title,
@@ -152,6 +153,7 @@ type GetAccountsParams struct {
 }
 
 type GetAccountsRow struct {
+	ID            int32          `json:"id"`
 	UserID        int32          `json:"user_id"`
 	CategoryID    int32          `json:"category_id"`
 	Title         string         `json:"title"`
@@ -180,6 +182,7 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Get
 	for rows.Next() {
 		var i GetAccountsRow
 		if err := rows.Scan(
+			&i.ID,
 			&i.UserID,
 			&i.CategoryID,
 			&i.Title,
