@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/BrunoMoises/go-finance/util"
+	"github.com/BrunoMoises/go-finance-api/util"
 	"github.com/stretchr/testify/require"
 )
 
