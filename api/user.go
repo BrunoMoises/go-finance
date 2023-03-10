@@ -1,11 +1,14 @@
 package api
 
 import (
+	"bytes"
+	"crypto/sha512"
 	"database/sql"
 	"net/http"
 
 	db "github.com/BrunoMoises/go-finance-api/db/sqlc"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type createUserRequest struct {
@@ -20,9 +23,15 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
 
+	preparedPassword := preparePassword(req.Password)
+	passwordHashInBytes, err := bcrypt.GenerateFromPassword([]byte(preparedPassword), bcrypt.DefaultCost)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	}
+	var passwordHash = string(passwordHashInBytes)
 	arg := db.CreateUserParams{
 		Username: req.Username,
-		Password: req.Password,
+		Password: passwordHash,
 		Email:    req.Email,
 	}
 
@@ -33,6 +42,13 @@ func (server *Server) createUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func preparePassword(password string) (preparedPassword string) {
+	hashedInput := sha512.Sum512_256([]byte(password))
+	trimmedHash := bytes.Trim(hashedInput[:], "\x00")
+	preparedPassword = string(trimmedHash)
+	return
 }
 
 type getUserRequest struct {
