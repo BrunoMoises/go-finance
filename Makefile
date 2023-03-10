@@ -16,4 +16,7 @@ test:
 server:
 	go run main.go
 
+sqlc-gen:
+	docker run --rm -v $${pwd}:/src -w /src kjconroy/sqlc generate
+
 .PHONY: createdb postgres dropdb migrateup migrationdrop test server
