@@ -15,8 +15,8 @@ where id = $1 limit 1;
 -- name: GetCategories :many
 select * from categories
 where user_id = $1 and type = $2
-and title like concat('%', @title::text, '%')
-and description like concat('%', @description::text, '%');
+and lower(title) like concat('%', lower(@title::text), '%')
+and lower(description) like concat('%', lower(@description::text), '%');
 
 -- name: UpdateCategory :one
 update categories 
