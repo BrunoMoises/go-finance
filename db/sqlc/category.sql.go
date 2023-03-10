@@ -47,7 +47,8 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 }
 
 const deleteCategory = `-- name: DeleteCategory :exec
-delete from categories where id = $1
+delete from categories
+where id = $1
 `
 
 func (q *Queries) DeleteCategory(ctx context.Context, id int32) error {
@@ -56,7 +57,9 @@ func (q *Queries) DeleteCategory(ctx context.Context, id int32) error {
 }
 
 const getCategories = `-- name: GetCategories :many
-select id, user_id, title, type, description, created_at from categories where user_id = $1 and type = $2 and title like $3 and description like $4
+select id, user_id, title, type, description, created_at from categories 
+where user_id = $1 and type = $2 
+and title like $3 and description like $4
 `
 
 type GetCategoriesParams struct {
@@ -101,8 +104,133 @@ func (q *Queries) GetCategories(ctx context.Context, arg GetCategoriesParams) ([
 	return items, nil
 }
 
+const getCategoriesByUserIdAndType = `-- name: GetCategoriesByUserIdAndType :many
+select id, user_id, title, type, description, created_at from categories 
+where user_id = $1 and type = $2
+`
+
+type GetCategoriesByUserIdAndTypeParams struct {
+	UserID int32  `json:"user_id"`
+	Type   string `json:"type"`
+}
+
+func (q *Queries) GetCategoriesByUserIdAndType(ctx context.Context, arg GetCategoriesByUserIdAndTypeParams) ([]Category, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesByUserIdAndType, arg.UserID, arg.Type)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Category{}
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Title,
+			&i.Type,
+			&i.Description,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCategoriesByUserIdAndTypeAndDescription = `-- name: GetCategoriesByUserIdAndTypeAndDescription :many
+select id, user_id, title, type, description, created_at from categories 
+where user_id = $1 and type = $2 
+and description like $3
+`
+
+type GetCategoriesByUserIdAndTypeAndDescriptionParams struct {
+	UserID      int32  `json:"user_id"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+}
+
+func (q *Queries) GetCategoriesByUserIdAndTypeAndDescription(ctx context.Context, arg GetCategoriesByUserIdAndTypeAndDescriptionParams) ([]Category, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesByUserIdAndTypeAndDescription, arg.UserID, arg.Type, arg.Description)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Category{}
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Title,
+			&i.Type,
+			&i.Description,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCategoriesByUserIdAndTypeAndTitle = `-- name: GetCategoriesByUserIdAndTypeAndTitle :many
+select id, user_id, title, type, description, created_at from categories 
+where user_id = $1 and type = $2 
+and title like $3
+`
+
+type GetCategoriesByUserIdAndTypeAndTitleParams struct {
+	UserID int32  `json:"user_id"`
+	Type   string `json:"type"`
+	Title  string `json:"title"`
+}
+
+func (q *Queries) GetCategoriesByUserIdAndTypeAndTitle(ctx context.Context, arg GetCategoriesByUserIdAndTypeAndTitleParams) ([]Category, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesByUserIdAndTypeAndTitle, arg.UserID, arg.Type, arg.Title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Category{}
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Title,
+			&i.Type,
+			&i.Description,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategory = `-- name: GetCategory :one
-select id, user_id, title, type, description, created_at from categories where id = $1 limit 1
+select id, user_id, title, type, description, created_at from categories 
+where id = $1 limit 1
 `
 
 func (q *Queries) GetCategory(ctx context.Context, id int32) (Category, error) {
@@ -120,7 +248,9 @@ func (q *Queries) GetCategory(ctx context.Context, id int32) (Category, error) {
 }
 
 const updateCategory = `-- name: UpdateCategory :one
-update categories set title = $2, description = $3 where id = $1 returning id, user_id, title, type, description, created_at
+update categories 
+set title = $2, description = $3 
+where id = $1 returning id, user_id, title, type, description, created_at
 `
 
 type UpdateCategoryParams struct {
