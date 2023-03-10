@@ -149,8 +149,14 @@ func (server *Server) getAccounts(ctx *gin.Context) {
 		Type:        req.Type,
 		Title:       req.Title,
 		Description: req.Description,
-		Date:        req.Date,
-		CategoryID:  req.CategoryID,
+		Date: sql.NullTime{
+			Time:  req.Date,
+			Valid: !req.Date.IsZero(),
+		},
+		CategoryID: sql.NullInt32{
+			Int32: req.CategoryID,
+			Valid: req.CategoryID != 0,
+		},
 	}
 
 	accounts, err := server.store.GetAccounts(ctx, arg)
