@@ -13,23 +13,10 @@ select * from categories
 where id = $1 limit 1;
 
 -- name: GetCategories :many
-select * from categories 
-where user_id = $1 and type = $2 
-and title like $3 and description like $4;
-
--- name: GetCategoriesByUserIdAndType :many
-select * from categories 
-where user_id = $1 and type = $2;
-
--- name: GetCategoriesByUserIdAndTypeAndTitle :many
-select * from categories 
-where user_id = $1 and type = $2 
-and title like $3;
-
--- name: GetCategoriesByUserIdAndTypeAndDescription :many
-select * from categories 
-where user_id = $1 and type = $2 
-and description like $3;
+select * from categories
+where user_id = $1 and type = $2
+and title like concat('%', @title::text, '%')
+and description like concat('%', @description::text, '%');
 
 -- name: UpdateCategory :one
 update categories 
