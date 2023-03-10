@@ -32,8 +32,8 @@ left join categories c on c.id = a.category_id
 where a.user_id = $1 and a.type = $2
 and lower(a.title) like concat('%', lower(@title::text), '%')
 and lower(a.description) like concat('%', lower(@description::text), '%')
-and a.category_id = coalesce(@category_id, a.category_id)
-and a.date = coalesce(@date, a.date);
+and a.category_id = coalesce(sqlc.narg('category_id'), a.category_id)
+and a.date = coalesce(sqlc.narg('date'), a.date);
 
 -- name: GetAccountReports :one
 select sum(value) as sum_value from accounts 
