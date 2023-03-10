@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	db "github.com/BrunoMoises/go-finance-api/db/sqlc"
+	"github.com/BrunoMoises/go-finance-api/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +17,11 @@ type createCategoryRequest struct {
 }
 
 func (server *Server) createCategory(ctx *gin.Context) {
+	err := util.GetTokenInHeaderAndVerify(ctx)
+	if err != nil {
+		return
+	}
+
 	var req createCategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -42,6 +48,11 @@ type getCategoryRequest struct {
 }
 
 func (server *Server) getCategory(ctx *gin.Context) {
+	err := util.GetTokenInHeaderAndVerify(ctx)
+	if err != nil {
+		return
+	}
+
 	var req getCategoryRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -66,12 +77,17 @@ type deleteCategoryRequest struct {
 }
 
 func (server *Server) deleteCategory(ctx *gin.Context) {
+	err := util.GetTokenInHeaderAndVerify(ctx)
+	if err != nil {
+		return
+	}
+
 	var req deleteCategoryRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
 
-	err := server.store.DeleteCategory(ctx, req.ID)
+	err = server.store.DeleteCategory(ctx, req.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -87,6 +103,11 @@ type updateCategoryRequest struct {
 }
 
 func (server *Server) updateCategory(ctx *gin.Context) {
+	err := util.GetTokenInHeaderAndVerify(ctx)
+	if err != nil {
+		return
+	}
+
 	var req updateCategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -115,6 +136,11 @@ type getCategoriesRequest struct {
 }
 
 func (server *Server) getCategories(ctx *gin.Context) {
+	err := util.GetTokenInHeaderAndVerify(ctx)
+	if err != nil {
+		return
+	}
+
 	var req getCategoriesRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
