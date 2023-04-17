@@ -16,6 +16,10 @@ type loginRequest struct {
 	Username string `json:"username" binging:"required"`
 	Password string `json:"password" binging:"required"`
 }
+type loginResponse struct {
+	UserID int32  `json:"user_id"`
+	Token  string `json:"token"`
+}
 
 type Claims struct {
 	Username string `json:"username"`
@@ -60,7 +64,12 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, token)
+	arg := &loginResponse{
+		UserID: user.ID,
+		Token:  token,
+	}
+
+	ctx.JSON(http.StatusOK, arg)
 }
 
 func CompareHash(password string, hash string) (err error) {
