@@ -58,7 +58,7 @@ func (server *Server) login(ctx *gin.Context) {
 	}
 
 	generatedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := generatedToken.SignedString([]byte("secret"))
+	token, err := generatedToken.SignedString([]byte("secret_key"))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
